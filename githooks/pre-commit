@@ -1,12 +1,12 @@
 #!/bin/sh
 
-readonly current_branch="$(git rev-parse --abbrev-ref HEAD)"
-
 prohibit_branches=(
     "master"
     "main"
     "develop"
 )
+
+readonly current_branch="$(git rev-parse --abbrev-ref HEAD)"
 
 readonly ESC=$(printf '\033')
 
