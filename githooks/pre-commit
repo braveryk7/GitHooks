@@ -1,36 +1,36 @@
 #!/bin/sh
 
-current_branch="$(git rev-parse --abbrev-ref HEAD)"
-
 prohibit_branches=(
     "master"
     "main"
     "develop"
 )
 
-ESC=$(printf '\033')
+readonly current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+readonly ESC=$(printf '\033')
 
 for prohibit_branch in "${prohibit_branches[@]}"
     do
         if [ "${prohibit_branch}" = "${current_branch}" ]; then
             printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
-            printf "    ${ESC}[91m%s${ESC}[m\n\n" "Not allowed to commit to the ${prohibit_branch} branch."
+            printf "    ${ESC}[91m%s${ESC}[m\n\n" "Not allowed to commit to the ${current_branch} branch."
             exit 1
         fi
     done
 
 # Ticket number.
 if [[ "${current_branch}" =~ ^[0-9]+ ]]; then
-    ticket_flag=0
+    readonly ticket_flag=0
 else
-    ticket_flag=1
+    readonly ticket_flag=1
 fi
 
 # Type.
 if [[ "${current_branch}" =~ (^[0-9]+)-(feat|fix|docs|style|refactor|pref|test|chore) ]]; then
-    type_flag=0
+    readonly type_flag=0
 else
-    type_flag=1
+    readonly type_flag=1
 fi
 
 if [ ${ticket_flag} = 1 ] || [ $type_flag = 1 ]; then
