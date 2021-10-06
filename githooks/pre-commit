@@ -1,0 +1,36 @@
+#!/bin/sh
+
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+ESC=$(printf '\033')
+
+# Ticket number.
+if [[ "${current_branch}" =~ ^[0-9]+ ]]; then
+    ticket_flag=0
+else
+    ticket_flag=1
+fi
+
+# Type.
+if [[ "${current_branch}" =~ (^[0-9]+)-(feat|fix|docs|style|refactor|pref|test|chore) ]]; then
+    type_flag=0
+else
+    type_flag=1
+fi
+
+if [ ${ticket_flag} = 1 ] || [ $type_flag = 1 ]; then
+    printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
+    if [ ${ticket_flag} = 1 ]; then
+        printf "\n    ${ESC}[91m%s${ESC}[m\n" "The branch name does not contain the ticket number."
+    fi
+    if [ ${type_flag} = 1 ]; then
+        printf "\n    ${ESC}[91m%s${ESC}[m\n" "Allowed types are as follows:"
+        printf "      ${ESC}[97m%s${ESC}[m\n" "feat / fix / docs / style / refactor / pref / test / chore"
+    fi
+    printf "\n  ${ESC}[97m%s${ESC}[m\n" "Change the branch name: git branch -m <current_branch_name> <new_branch_name>"
+    printf "    ${ESC}[97m%s${ESC}[m" "Current branch name is"
+    printf " ${ESC}[93m%s${ESC}[m\n" "${current_branch}"
+    printf "    ${ESC}[97m%s${ESC}[m\n\n" "Branch naming conventions: <ticket>-<type>-<subject>"
+
+    exit 1
+fi
