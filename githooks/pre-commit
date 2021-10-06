@@ -14,7 +14,7 @@ for prohibit_branch in "${prohibit_branches[@]}"
     do
         if [ "${prohibit_branch}" = "${current_branch}" ]; then
             printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
-            printf "    ${ESC}[91m%s${ESC}[m\n\n" "Not allowed to commit to the ${prohibit_branch} branch."
+            printf "    ${ESC}[91m%s${ESC}[m\n\n" "Not allowed to commit to the ${current_branch} branch."
             exit 1
         fi
     done
