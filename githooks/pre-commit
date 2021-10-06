@@ -2,7 +2,22 @@
 
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
 
+prohibit_branches=(
+    "master"
+    "main"
+    "develop"
+)
+
 ESC=$(printf '\033')
+
+for prohibit_branch in "${prohibit_branches[@]}"
+    do
+        if [ "${prohibit_branch}" = "${current_branch}" ]; then
+            printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
+            printf "    ${ESC}[91m%s${ESC}[m\n\n" "Not allowed to commit to the ${prohibit_branch} branch."
+            exit 1
+        fi
+    done
 
 # Ticket number.
 if [[ "${current_branch}" =~ ^[0-9]+ ]]; then
@@ -31,6 +46,5 @@ if [ ${ticket_flag} = 1 ] || [ $type_flag = 1 ]; then
     printf "    ${ESC}[97m%s${ESC}[m" "Current branch name is"
     printf " ${ESC}[93m%s${ESC}[m\n" "${current_branch}"
     printf "    ${ESC}[97m%s${ESC}[m\n\n" "Branch naming conventions: <ticket>-<type>-<subject>"
-
     exit 1
 fi
