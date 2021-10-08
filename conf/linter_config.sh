@@ -27,3 +27,16 @@ function get_files() {
             esac
     done
 }
+
+function output() {
+    if [ ${is_error} -gt 0 ]; then
+        is_error=1
+        printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
+        printf "    ${ESC}[91m%s${ESC}[m\n" "Lint tool found an error."
+        echo "${output}\n\n"
+    else
+        is_error=0
+    fi
+
+    exit ${is_error}
+}
