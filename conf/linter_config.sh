@@ -61,3 +61,26 @@ function set_eslint() {
         eslint="not found"
     fi
 }
+
+function set_stylelint() {
+    if [ -e "${root_path}/node_modules/.bin/stylelint" ]; then
+        stylelint=${root_path}/node_modules/.bin/stylelint
+        if [ -e "${root_path}/.stylelintrc" ]; then
+            stylelint_config=${root_path}/.stylelintrc
+        elif [ -e "${root_path}/.stylelint.config.js" ]; then
+            stylelint_config=${root_path}/.stylelint.config.js
+        elif [ -e "${root_path}/.stylelint.config.cjs" ]; then
+            stylelint_config=${root_path}/.stylelint.config.cjs
+        elif [ -e "${root_path}/.stylelintrc.yaml" ]; then
+            stylelint_config=${root_path}/.stylelintrc.yaml
+        elif [ -e "${root_path}/.stylelintrc.yml" ]; then
+            stylelint_config=${root_path}/.stylelintrc.yml
+        elif [ -e "${root_path}/.stylelintrc.json" ]; then
+            stylelint_config=${root_path}/.stylelintrc.json
+        else
+            stylelint_config=""
+        fi
+    else
+        stylelint="not found"
+    fi
+}
