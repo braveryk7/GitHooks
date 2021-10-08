@@ -137,3 +137,20 @@ function execute_stylelint() {
         fi
     fi
 }
+
+function execute_phpcs() {
+    ESC=$(printf '\033')
+    if [ -n "${php_files}" ]; then
+        if [ "${phpcs}" != "not found" ]; then
+            if [ ! -e "${phpcs_config}" ]; then
+                output+="\n"
+                output+='\nNOTE: PHP_CodeSniffer configuration file is not found.\n'
+            fi
+            output+="\n\n"
+            output+=`${phpcs} ${php_files} --colors`
+            is_error+=$?
+        else
+            output+='\nNOTE: PHP_CodeSniffer is not installed. CSS syntax checking is skipped.'
+        fi
+    fi
+}
