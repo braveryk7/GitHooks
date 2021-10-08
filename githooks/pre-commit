@@ -6,6 +6,33 @@ prohibit_branches=(
     "develop"
 )
 
+is_js=true
+is_css=true
+is_php=true
+
+if "${is_js}" || "${is_css}" || "${is_php}"; then
+    readonly root_path=`git rev-parse --git-dir`/..
+    . conf/linter_config.sh
+
+    get_files
+
+    if "${is_js}" || "${is_css}" || "${is_php}"; then
+        if "${is_js}"; then
+            set_eslint
+            execute_eslint
+        fi
+        if "${is_css}"; then
+            set_stylelint
+            execute_stylelint
+        fi
+        if "${is_php}"; then
+            set_phpcs
+            execute_phpcs
+        fi
+        output
+    fi
+fi
+
 readonly current_branch="$(git rev-parse --abbrev-ref HEAD)"
 
 readonly ESC=$(printf '\033')
