@@ -40,3 +40,24 @@ function output() {
 
     exit ${is_error}
 }
+
+function set_eslint() {
+    if [ -e "${root_path}/node_modules/.bin/eslint" ]; then
+        eslint=${root_path}/node_modules/.bin/eslint
+        if [ -e "${root_path}/.eslintrc.js" ]; then
+            eslint_config=${root_path}/.eslintrc.js
+        elif [ -e "${root_path}/.eslintrc.cjs" ]; then
+            eslint_config=${root_path}/.eslintrc.cjs
+        elif [ -e "${root_path}/.eslintrc.yaml" ]; then
+            eslint_config=${root_path}/.eslintrc.yaml
+        elif [ -e "${root_path}/.eslintrc.yml" ]; then
+            eslint_config=${root_path}/.eslintrc.yml
+        elif [ -e "${root_path}/.eslintrc.json" ]; then
+            eslint_config=${root_path}/.eslintrc.json
+        else
+            eslint_config=""
+        fi
+    else
+        eslint="not found"
+    fi
+}
