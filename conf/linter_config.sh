@@ -121,3 +121,19 @@ function execute_eslint() {
         fi
     fi
 }
+
+function execute_stylelint() {
+    stylelint_max_warnings=0
+    ESC=$(printf '\033')
+    if [ -n "${css_files}" ]; then
+        if [ "${stylelint}" != "not found" ]; then
+            if [ ! -e "${stylelint_config}" ]; then
+                output+='\nNOTE: Stylelint configuration file is not found.\n'
+            fi
+            output+=`${stylelint} ${css_files} --config ${stylelint_config} --mw ${stylelint_max_warnings} --color`
+            is_error+=$?
+        else
+            output+='\nNOTE: Stylelint is not installed. CSS syntax checking is skipped.'
+        fi
+    fi
+}
