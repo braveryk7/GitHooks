@@ -84,3 +84,22 @@ function set_stylelint() {
         stylelint="not found"
     fi
 }
+
+function set_phpcs() {
+    if [ -e "${root_path}/vendor/bin/phpcs" ]; then
+        phpcs=${root_path}/vendor/bin/phpcs
+        if [ -e "${root_path}/.phpcs.xml" ]; then
+            phpcs_config=${root_path}/.phpcs.xml
+        elif [ -e "${root_path}/phpcs.xml" ]; then
+            phpcs_config=${root_path}/phpcs.xml
+        elif [ -e "${root_path}/.phpcs.xml.dist" ]; then
+            phpcs_config=${root_path}/.phpcs.xml.dist
+        elif [ -e "${root_path}/phpcs.xml.dist" ]; then
+            phpcs_config=${root_path}/phpcs.xml.dist
+        else
+            phpcs_config=""
+        fi
+    else
+        phpcs="not found"
+    fi
+}
