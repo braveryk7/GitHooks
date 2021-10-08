@@ -8,7 +8,7 @@
 このGitHooksを利用することで、チーム開発の体験を向上させることが可能です。
 
 ## 使い方
-npm、composerのscriptsを使用して`init.sh`を実行してください。
+npm、composerのscriptsを使用して`ghinit`コマンドを実行してください。
 
 package.json、composer.jsonをgitリポジトリに含めておけば、新しいメンバーがプロジェクトに参加した時もGitHooksを強制させることが可能です。
 
@@ -34,7 +34,7 @@ package.json、composer.jsonをgitリポジトリに含めておけば、新し�
 
 `ghinit`コマンドは以下の初期設定を行っています。
 
-1. `conf/init.sh`を作成
+1. `conf/init.sh`を作成
 1. `.git/hooks`配下に`commit-msg`と`pre-commit`を設置
 1. `commit-msg`と`pre-commit`に実行権限を付与
 1. `conf`配下に`linter_config.sh`を設置
