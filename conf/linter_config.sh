@@ -103,3 +103,21 @@ function set_phpcs() {
         phpcs="not found"
     fi
 }
+
+function execute_eslint() {
+    ESC=$(printf '\033')
+    eslint_max_warnings=0
+    if [ -n "${js_files}" ]; then
+        # Check installation of eslint.
+        if [ "${eslint}" != "not found" ]; then
+            # Check existence of cording standard file.
+            if [ ! -e "${eslint_config}" ]; then
+                output+='\nNOTE: eslint configuration file is not found.\n'
+            fi
+            output+=`${eslint} -c ${eslint_config} ${js_files} --max-warnings ${eslint_max_warnings} --color`
+            is_error+=$?
+        else
+            output+='\nNOTE: eslint is not installed. js syntax checking is skipped.'
+        fi
+    fi
+}
