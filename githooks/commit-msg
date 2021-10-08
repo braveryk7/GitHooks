@@ -1,13 +1,13 @@
 #!/bin/sh
 
-commit_message=`cat $1`
-current_branch="$(git rev-parse --abbrev-ref HEAD)"
+readonly commit_message=`cat $1`
+readonly current_branch="$(git rev-parse --abbrev-ref HEAD)"
 
-ESC=$(printf '\033')
+readonly ESC=$(printf '\033')
 
 if [[ ${current_branch} =~ ^[0-9]+ ]]; then
-    ticket=(`echo ${current_branch} | cut -d "-" -f 1`)
-    create_message="refs #${ticket} ${commit_message}"
+    readonly ticket=(`echo ${current_branch} | cut -d "-" -f 1`)
+    readonly create_message="refs #${ticket} ${commit_message}"
     echo "${create_message}" > $1
 else
     printf "${ESC}[91m%s${ESC}[m\n" "  Incorrect branch naming convention."
