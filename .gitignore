@@ -1,0 +1,12 @@
+.DS_store
+Thumbs.db
+node_modules
+vendor
+src
+
+.eslint*
+.stylelint*
+*phpcs*
+
+composer*
+package*

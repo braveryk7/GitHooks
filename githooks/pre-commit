@@ -1,0 +1,77 @@
+#!/bin/sh
+
+prohibit_branches=(
+    "master"
+    "main"
+    "develop"
+)
+
+is_js=true
+is_css=true
+is_php=true
+
+if "${is_js}" || "${is_css}" || "${is_php}"; then
+    readonly root_path=`git rev-parse --git-dir`/..
+    . conf/linter_config.sh
+
+    get_files
+
+    if "${is_js}" || "${is_css}" || "${is_php}"; then
+        if "${is_js}"; then
+            set_eslint
+            execute_eslint
+        fi
+        if "${is_css}"; then
+            set_stylelint
+            execute_stylelint
+        fi
+        if "${is_php}"; then
+            set_phpcs
+            execute_phpcs
+        fi
+        output
+    fi
+fi
+
+readonly current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+readonly ESC=$(printf '\033')
+
+for prohibit_branch in "${prohibit_branches[@]}"
+    do
+        if [ "${prohibit_branch}" = "${current_branch}" ]; then
+            printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
+            printf "    ${ESC}[91m%s${ESC}[m\n\n" "Not allowed to commit to the ${current_branch} branch."
+            exit 1
+        fi
+    done
+
+# Ticket number.
+if [[ "${current_branch}" =~ ^[0-9]+ ]]; then
+    readonly ticket_flag=0
+else
+    readonly ticket_flag=1
+fi
+
+# Type.
+if [[ "${current_branch}" =~ (^[0-9]+)-(feat|fix|docs|style|refactor|pref|test|chore) ]]; then
+    readonly type_flag=0
+else
+    readonly type_flag=1
+fi
+
+if [ ${ticket_flag} = 1 ] || [ $type_flag = 1 ]; then
+    printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
+    if [ ${ticket_flag} = 1 ]; then
+        printf "\n    ${ESC}[91m%s${ESC}[m\n" "The branch name does not contain the ticket number."
+    fi
+    if [ ${type_flag} = 1 ]; then
+        printf "\n    ${ESC}[91m%s${ESC}[m\n" "Allowed types are as follows:"
+        printf "      ${ESC}[97m%s${ESC}[m\n" "feat / fix / docs / style / refactor / pref / test / chore"
+    fi
+    printf "\n  ${ESC}[97m%s${ESC}[m\n" "Change the branch name: git branch -m <current_branch_name> <new_branch_name>"
+    printf "    ${ESC}[97m%s${ESC}[m" "Current branch name is"
+    printf " ${ESC}[93m%s${ESC}[m\n" "${current_branch}"
+    printf "    ${ESC}[97m%s${ESC}[m\n\n" "Branch naming conventions: <ticket>-<type>-<subject>"
+    exit 1
+fi
