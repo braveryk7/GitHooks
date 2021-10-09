@@ -8,21 +8,29 @@
 このGitHooksを利用することで、チーム開発の体験を向上させることが可能です。
 
 ## 使い方
-npm、composerのscriptsを使用して`ghinit`コマンドを実行してください。
+npm、composerのscriptsを使用して`ghinit`コマンドを作成、実行してください。
 
-package.json、composer.jsonをgitリポジトリに含めておけば、新しいメンバーがプロジェクトに参加した時もGitHooksを強制させることが可能です。
+`ghinit`コマンドは以下の内容です。
+
+```bash
+curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > conf/init.sh && sh conf/init.sh
+```
+
+https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh は当リポジトリのいくつかのファイルをダウンロードし、自動的に設定を完了するプログラムです。
+
+package.json、composer.jsonに`ghinit`コマンドを設定しgitリポジトリに含めておけば新しいメンバーがプロジェクトに参加した時も`npm install`や`composer install`するだけでGitHooksを強制させることが可能です。
 
 ```json:package.json
 # postinstallフックを使い、npm install時に自動実行
 
 "scripts": {
     "postinstall": "ghinit",
-    "ghinit": "curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > conf/init.sh && sh conf/init.sh
+    "ghinit": "curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > conf/init.sh && sh conf/init.sh"
 }
 ```
 
 ```json:composer.json
-# post-install-cmdフックを使い、npm install時に自動実行
+# post-install-cmdフックを使い、composer install時に自動実行
 
 "scripts": {
     "post-install-cmd": [
