@@ -111,9 +111,6 @@ reft #3 test commit"
 ### 使い方
 `conf/linter_config.sh`が各種Linterを実行させるために必要なファイルです。
 
-プロジェクトルートに`conf`ディレクトリを作成して、配下に`linter_config.sh`を設置してください。
-
-
 実行自体は`pre-commit`から呼び出しています。
 
 ```bash:pre-commit
