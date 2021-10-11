@@ -13,7 +13,7 @@ npm、composerのscriptsを使用して`ghinit`コマンドを作成、実行し
 `ghinit`コマンドは以下の内容です。
 
 ```bash
-curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > conf/init.sh && sh conf/init.sh
+curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > init.sh && sh init.sh
 ```
 
 https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh は当リポジトリのいくつかのファイルをダウンロードし、自動的に設定を完了するプログラムです。
@@ -25,29 +25,29 @@ package.json、composer.jsonに`ghinit`コマンドを設定しgitリポジト�
 
 "scripts": {
     "postinstall": "ghinit",
-    "ghinit": "curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > conf/init.sh && sh conf/init.sh"
+    "ghinit": "curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > init.sh && sh init.sh"
 }
 ```
 
 ```json:composer.json
-# post-install-cmdフックを使い、composer install時に自動実行
+# post-autoload-dumpフックを使い、composer install時に自動実行
 
 "scripts": {
-    "post-install-cmd": [
+    "post-autoload-dump": [
         "@ghinit"
     ],
-    "ghinit": "curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > conf/init.sh && sh conf/init.sh
+    "ghinit": "curl https://raw.githubusercontent.com/braveryk7/GitHooks/main/conf/init.sh > init.sh && sh init.sh
 }
 ```
 
 `ghinit`コマンドは以下の初期設定を行っています。
 
-1. `conf/init.sh`を作成
+1. `init.sh`を作成
 1. `.git/hooks`配下に`commit-msg`と`pre-commit`を設置
 1. `commit-msg`と`pre-commit`に実行権限を付与
-1. `conf`配下に`linter_config.sh`を設置
+1. `conf`ディレクトリを作成し、配下に`linter_config.sh`を設置
 1. ESLint / StyleLint / PHP CodeSnifferと各設定ファイルのチェック
-1. `conf/init.sh`の削除
+1. `init.sh`の削除
 
 ## チケット駆動開発の遵守
 コミットメッセージに自動的に参照先となるissueのチケット番号を付与することで、チケット番号を入れ忘れるというヒューマンエラーを排除できます。
@@ -110,9 +110,6 @@ reft #3 test commit"
 
 ### 使い方
 `conf/linter_config.sh`が各種Linterを実行させるために必要なファイルです。
-
-プロジェクトルートに`conf`ディレクトリを作成して、配下に`linter_config.sh`を設置してください。
-
 
 実行自体は`pre-commit`から呼び出しています。
 
