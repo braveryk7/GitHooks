@@ -116,4 +116,4 @@ else
     echo "     Required: .phpcs.xml / phpcs.xml / .phpcs.xml.dist / phpcs.xml.dist\n"
 fi
 
-rm conf/init.sh
+rm init.sh
