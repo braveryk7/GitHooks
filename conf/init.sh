@@ -3,6 +3,7 @@
 readonly repository="https://raw.githubusercontent.com/braveryk7/GitHooks/main"
 readonly root_path=`git rev-parse --git-dir`/..
 readonly ESC=$(printf '\033')
+readonly dir_name="conf"
 
 function exists_check() {
     if [ -e "${1}" ]; then
@@ -21,13 +22,18 @@ printf "\n"
 
 printf "${ESC}[44m%s${ESC}[m\n\n" "/------- Program check. -------/"
 
+if [ ! -d "${dir_name}" ]; then
+    mkdir "${dir_name}"
+    echo "Create ${dir_name} directory."
+fi
+
 `curl ${repository}/githooks/commit-msg > .git/hooks/commit-msg`
 `curl ${repository}/githooks/pre-commit > .git/hooks/pre-commit`
-`curl ${repository}/conf/linter_config.sh > conf/linter_config.sh`
+`curl ${repository}/conf/linter_config.sh > "${dir_name}"/linter_config.sh`
 
 exists_check .git/hooks/commit-msg
 exists_check .git/hooks/pre-commit
-exists_check conf/linter_config.sh
+exists_check "${dir_name}/linter_config.sh"
 
 chmod +x .git/hooks/commit-msg
 chmod +x .git/hooks/pre-commit
@@ -51,7 +57,7 @@ fi
 
 printf "\n${ESC}[44m%s${ESC}[m\n\n" "/------- Linter check. -------/"
 
-. conf/linter_config.sh
+. "${dir_name}/linter_config.sh"
 
 set_eslint
 
