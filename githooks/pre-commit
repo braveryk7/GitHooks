@@ -1,31 +1,29 @@
 #!/bin/sh
 
-prohibit_branches=(
-    "master"
-    "main"
-    "develop"
-)
+# 禁止ブランチはスペース区切りの文字列で定義
+prohibit_branches="master main develop"
 
 is_js=true
 is_css=true
 is_php=true
 
-if "${is_js}" || "${is_css}" || "${is_php}"; then
-    readonly root_path=`git rev-parse --git-dir`/..
+# 少なくともひとつのリンターが有効の場合
+if [ "$is_js" = "true" ] || [ "$is_css" = "true" ] || [ "$is_php" = "true" ]; then
+    root_path="$(git rev-parse --git-dir)/.."
     . conf/linter_config.sh
 
     get_files
 
-    if "${is_js}" || "${is_css}" || "${is_php}"; then
-        if "${is_js}"; then
+    if [ "$is_js" = "true" ] || [ "$is_css" = "true" ] || [ "$is_php" = "true" ]; then
+        if [ "$is_js" = "true" ]; then
             set_eslint
             execute_eslint
         fi
-        if "${is_css}"; then
+        if [ "$is_css" = "true" ]; then
             set_stylelint
             execute_stylelint
         fi
-        if "${is_php}"; then
+        if [ "$is_php" = "true" ]; then
             set_phpcs
             execute_phpcs
         fi
@@ -33,45 +31,46 @@ if "${is_js}" || "${is_css}" || "${is_php}"; then
     fi
 fi
 
-readonly current_branch="$(git rev-parse --abbrev-ref HEAD)"
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+ESC=$(printf '\033')
 
-readonly ESC=$(printf '\033')
+# 禁止ブランチへのコミットチェック
+for prohibit_branch in $prohibit_branches; do
+    if [ "$prohibit_branch" = "$current_branch" ]; then
+        printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
+        printf "    ${ESC}[91m%s${ESC}[m\n\n" "Not allowed to commit to the ${current_branch} branch."
+        exit 1
+    fi
+done
 
-for prohibit_branch in "${prohibit_branches[@]}"
-    do
-        if [ "${prohibit_branch}" = "${current_branch}" ]; then
-            printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
-            printf "    ${ESC}[91m%s${ESC}[m\n\n" "Not allowed to commit to the ${current_branch} branch."
-            exit 1
-        fi
-    done
+# チケット番号の存在確認（先頭が数字かどうか）
+case "$current_branch" in
+    [0-9]*)
+        ticket_flag=0 ;;
+    *)
+        ticket_flag=1 ;;
+esac
 
-# Ticket number.
-if [[ "${current_branch}" =~ ^[0-9]+ ]]; then
-    readonly ticket_flag=0
-else
-    readonly ticket_flag=1
-fi
+# タイプのチェック（-feat-, -fix- などのパターン）
+case "$current_branch" in
+    [0-9]*-feat-* | [0-9]*-fix-* | [0-9]*-docs-* | [0-9]*-style-* | [0-9]*-refactor-* | [0-9]*-pref-* | [0-9]*-test-* | [0-9]*-chore-*)
+        type_flag=0 ;;
+    *)
+        type_flag=1 ;;
+esac
 
-# Type.
-if [[ "${current_branch}" =~ (^[0-9]+)-(feat|fix|docs|style|refactor|pref|test|chore) ]]; then
-    readonly type_flag=0
-else
-    readonly type_flag=1
-fi
-
-if [ ${ticket_flag} = 1 ] || [ $type_flag = 1 ]; then
+if [ "$ticket_flag" -eq 1 ] || [ "$type_flag" -eq 1 ]; then
     printf "\n  ${ESC}[41m%s${ESC}[m\n" "Commit aborted."
-    if [ ${ticket_flag} = 1 ]; then
+    if [ "$ticket_flag" -eq 1 ]; then
         printf "\n    ${ESC}[91m%s${ESC}[m\n" "The branch name does not contain the ticket number."
     fi
-    if [ ${type_flag} = 1 ]; then
+    if [ "$type_flag" -eq 1 ]; then
         printf "\n    ${ESC}[91m%s${ESC}[m\n" "Allowed types are as follows:"
         printf "      ${ESC}[97m%s${ESC}[m\n" "feat / fix / docs / style / refactor / pref / test / chore"
     fi
     printf "\n  ${ESC}[97m%s${ESC}[m\n" "Change the branch name: git branch -m <current_branch_name> <new_branch_name>"
     printf "    ${ESC}[97m%s${ESC}[m" "Current branch name is"
-    printf " ${ESC}[93m%s${ESC}[m\n" "${current_branch}"
+    printf " ${ESC}[93m%s${ESC}[m\n" "$current_branch"
     printf "    ${ESC}[97m%s${ESC}[m\n\n" "Branch naming conventions: <ticket>-<type>-<subject>"
     exit 1
 fi
